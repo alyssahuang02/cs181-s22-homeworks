@@ -68,7 +68,8 @@ def make_basis(xx,part='a',is_years=True):
     if part == "a" and not is_years:
         xx = xx/20
         
-        
+    print(xx)
+    print(xx.shape)
     return None
 
 # Nothing fancy for outputs.
@@ -78,6 +79,8 @@ Y = republican_counts
 def find_weights(X,Y):
     w = np.dot(np.linalg.pinv(np.dot(X.T, X)), np.dot(X.T, Y))
     return w
+
+w  = find_weights(X,Y)
 
 # Compute the regression line on a grid of inputs.
 # DO NOT CHANGE grid_years!!!!!

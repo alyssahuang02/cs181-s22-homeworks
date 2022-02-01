@@ -30,10 +30,27 @@ x_test = np.arange(0, 12, .1)
 print("y is:")
 print(y_train)
 
+def kern(x, x_prime, tau):
+    return np.exp(-1*np.transpose(x - x_prime)*(x-x_prime)/tau)
+
 def predict_knn(k=1, tau=1):
     """Returns predictions for the values in x_test, using KNN predictor with the specified k."""
-    # TODO: your code here
-    return np.zeros(len(x_test))
+    res = np.zeros(len(x_test))
+    index = 0
+    for x in x_test:
+        arr = []
+        for i in range(len(data)):
+            x_t = x_train[i]
+            arr.append((kern(x, x_t, tau), i))
+        arr.sort(reverse=True)
+        sum = 0
+        for i in range(k):
+            print(arr)
+            sum += y_train[int(arr[i][1])]
+        res[index] = sum/k
+        index += 1
+
+    return res
 
 
 def plot_knn_preds(k):
