@@ -5,6 +5,7 @@
 ##################
 
 import csv
+from operator import index
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -69,11 +70,11 @@ def make_basis(xx,part='a',is_years=True):
         xx = xx/20
         
     arr = [np.ones(xx.shape)]
-    if part == "a" and is_years:
+    if part == "a":
         for i in range(1, 6):
             arr.append(xx**i)
     
-    elif part == "b" and is_years:
+    elif part == "b":
         # arange for years
         miu_j = 1960
         while miu_j <= 2010:
@@ -81,12 +82,14 @@ def make_basis(xx,part='a',is_years=True):
             arr.append(cur)
             miu_j += 5
 
-    elif part == "c" and is_years:
+    elif part == "c":
         for i in range(1, 6):
+            i = float (i)
             arr.append(np.cos(xx/i))
 
-    elif part == "d" and is_years:
+    else:
         for i in range(1, 26):
+            i = float (i)
             arr.append(np.cos(xx/i))
     
     res = np.vstack(arr)
@@ -105,16 +108,43 @@ def find_weights(X,Y):
 grid_years = np.linspace(1960, 2005, 200)
 grid_X = np.vstack((np.ones(grid_years.shape), grid_years)) # basic basis
 
+print("Losses for years")
 # Plot the data and the regression line.
 for part in ['a', 'b', 'c', 'd']:
-    train_years_basis = make_basis(years, part=part, is_years=True) # basis for training data years
-    w = find_weights(train_years_basis, republican_counts)
-    grid_X = make_basis(grid_years, part=part, is_years=True) # basis for testing data years
+    years_basis = make_basis(years, part=part, is_years=True) # basis for years (24, ?)
+    w = find_weights(years_basis, republican_counts)
+    grid_X = make_basis(grid_years, part=part, is_years=True) # basis for smoother plotting (200, ?)
     grid_Yhat  = np.dot(grid_X, w)
     plt.plot(years, republican_counts, 'o', grid_years, grid_Yhat, '-')
     plt.xlabel("Year")
     plt.ylabel("Number of Republicans in Congress")
     plt.show()
+
+    predictions = np.dot(years_basis, w) # 24 vector to calculate loss
+    print(sum((predictions - republican_counts)**2))
+
+print()
+grid_sunspots = np.linspace(sunspot_counts[0], sunspot_counts[1], 40)
+count = 1
+for year in range(1965, 1985, 5):
+    grid_sunspots = np.append(grid_sunspots, np.linspace(sunspot_counts[count], sunspot_counts[count+1], 40))
+    count += 2
+
+print("Losses for sunspots")
+
+for part in ['a', 'c', 'd']:
+    sunspots_basis = make_basis(sunspot_counts, part=part, is_years=False) # basis for sunspots (24, ?)
+    w = find_weights(sunspots_basis, republican_counts)
+    grid_X = make_basis(grid_sunspots, part=part, is_years=False) # basis for smoother plotting (200, ?)
+    grid_Yhat  = np.dot(grid_X, w)
+
+    plt.plot(sunspot_counts, republican_counts, 'o', grid_sunspots, grid_Yhat, '-')
+    plt.xlabel("Number of Sunspots")
+    plt.ylabel("Number of Republicans in Congress")
+    plt.show()
+
+    predictions = np.dot(sunspots_basis, w) # 24 vector to calculate loss
+    print(sum((predictions - sunspot_counts)**2))
 
 # w = 1
 # grid_Yhat  = np.dot(grid_X, w)
