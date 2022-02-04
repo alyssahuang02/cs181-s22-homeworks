@@ -51,4 +51,4 @@ def plot():
     plt.savefig("plot.png", facecolor="white")
     plt.show()
 
-plot()
+# plot()

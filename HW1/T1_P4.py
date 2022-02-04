@@ -68,9 +68,29 @@ def make_basis(xx,part='a',is_years=True):
     if part == "a" and not is_years:
         xx = xx/20
         
-    print(xx)
-    print(xx.shape)
-    return None
+    arr = [np.ones(xx.shape)]
+    if part == "a" and is_years:
+        for i in range(1, 6):
+            arr.append(xx**i)
+    
+    elif part == "b" and is_years:
+        # arange for years
+        miu_j = 1960
+        while miu_j <= 2010:
+            cur = np.exp((-(xx-miu_j)**2)/25)
+            arr.append(cur)
+            miu_j += 5
+
+    elif part == "c" and is_years:
+        for i in range(1, 6):
+            arr.append(np.cos(xx/i))
+
+    elif part == "d" and is_years:
+        for i in range(1, 26):
+            arr.append(np.cos(xx/i))
+    
+    res = np.vstack(arr)
+    return res.T
 
 # Nothing fancy for outputs.
 Y = republican_counts
@@ -80,18 +100,25 @@ def find_weights(X,Y):
     w = np.dot(np.linalg.pinv(np.dot(X.T, X)), np.dot(X.T, Y))
     return w
 
-w  = find_weights(X,Y)
-
 # Compute the regression line on a grid of inputs.
 # DO NOT CHANGE grid_years!!!!!
 grid_years = np.linspace(1960, 2005, 200)
-grid_X = np.vstack((np.ones(grid_years.shape), grid_years))
-grid_Yhat  = np.dot(grid_X.T, w)
-
-# TODO: plot and report sum of squared error for each basis
+grid_X = np.vstack((np.ones(grid_years.shape), grid_years)) # basic basis
 
 # Plot the data and the regression line.
-plt.plot(years, republican_counts, 'o', grid_years, grid_Yhat, '-')
-plt.xlabel("Year")
-plt.ylabel("Number of Republicans in Congress")
-plt.show()
+for part in ['a', 'b', 'c', 'd']:
+    train_years_basis = make_basis(years, part=part, is_years=True) # basis for training data years
+    w = find_weights(train_years_basis, republican_counts)
+    grid_X = make_basis(grid_years, part=part, is_years=True) # basis for testing data years
+    grid_Yhat  = np.dot(grid_X, w)
+    plt.plot(years, republican_counts, 'o', grid_years, grid_Yhat, '-')
+    plt.xlabel("Year")
+    plt.ylabel("Number of Republicans in Congress")
+    plt.show()
+
+# w = 1
+# grid_Yhat  = np.dot(grid_X, w)
+# print(grid_years.shape)
+# print('yay')
+
+# TODO: plot and report sum of squared error for each basis

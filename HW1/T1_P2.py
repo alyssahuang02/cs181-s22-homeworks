@@ -45,7 +45,7 @@ def predict_knn(k=1, tau=1):
         arr.sort(reverse=True)
         sum = 0
         for i in range(k):
-            print(arr)
+            # print(arr)
             sum += y_train[int(arr[i][1])]
         res[index] = sum/k
         index += 1
