@@ -30,6 +30,7 @@ x_test = np.arange(0, 12, .1)
 print("y is:")
 print(y_train)
 
+# kernel function as defined in problem 1
 def kern(x, x_prime, tau):
     return np.exp(-1*np.transpose(x - x_prime)*(x-x_prime)/tau)
 
@@ -42,10 +43,9 @@ def predict_knn(k=1, tau=1):
         for i in range(len(data)):
             x_t = x_train[i]
             arr.append((kern(x, x_t, tau), i))
-        arr.sort(reverse=True)
+        arr.sort(reverse=True) # sort by kernel values in decreasing order
         sum = 0
         for i in range(k):
-            # print(arr)
             sum += y_train[int(arr[i][1])]
         res[index] = sum/k
         index += 1

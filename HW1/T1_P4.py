@@ -75,7 +75,6 @@ def make_basis(xx,part='a',is_years=True):
             arr.append(xx**i)
     
     elif part == "b":
-        # arange for years
         miu_j = 1960
         while miu_j <= 2010:
             cur = np.exp((-(xx-miu_j)**2)/25)
@@ -118,17 +117,21 @@ for part in ['a', 'b', 'c', 'd']:
     plt.plot(years, republican_counts, 'o', grid_years, grid_Yhat, '-')
     plt.xlabel("Year")
     plt.ylabel("Number of Republicans in Congress")
+    plt.title("Basis " + part.upper() + ": Year v. Number of Republicans in the Senate")
+    plt.tight_layout()
+    plt.savefig("1_basis_"+part+".png", facecolor="white")
     plt.show()
 
     predictions = np.dot(years_basis, w) # 24 vector to calculate loss
     print(sum((predictions - republican_counts)**2))
 
 print()
-grid_sunspots = np.linspace(sunspot_counts[0], sunspot_counts[1], 40)
-count = 1
-for year in range(1965, 1985, 5):
-    grid_sunspots = np.append(grid_sunspots, np.linspace(sunspot_counts[count], sunspot_counts[count+1], 40))
-    count += 2
+
+# convert data to restrict to years before 1985
+sunspot_counts = sunspot_counts[years<last_year]
+republican_counts = republican_counts[years<last_year]
+max_val = max(sunspot_counts)
+grid_sunspots = np.linspace(0, max_val, 200)
 
 print("Losses for sunspots")
 
@@ -141,14 +144,13 @@ for part in ['a', 'c', 'd']:
     plt.plot(sunspot_counts, republican_counts, 'o', grid_sunspots, grid_Yhat, '-')
     plt.xlabel("Number of Sunspots")
     plt.ylabel("Number of Republicans in Congress")
+    plt.title("Basis " + part.upper() + ": Number of Sunspots v. Number of Republicans in the Senate")
+    plt.tight_layout()
+    plt.savefig("2_basis_"+part+".png", facecolor="white")
+    plt.show()
     plt.show()
 
     predictions = np.dot(sunspots_basis, w) # 24 vector to calculate loss
-    print(sum((predictions - sunspot_counts)**2))
-
-# w = 1
-# grid_Yhat  = np.dot(grid_X, w)
-# print(grid_years.shape)
-# print('yay')
+    print(sum((predictions - republican_counts)**2))
 
 # TODO: plot and report sum of squared error for each basis
