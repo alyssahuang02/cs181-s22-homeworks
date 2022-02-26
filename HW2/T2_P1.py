@@ -47,13 +47,16 @@ class LogisticRegressor:
             self.W = w_init
         else:
             self.W = np.random.rand(x.shape[1], 1)
-            for i in range(self.runs):
-                # print(self.predict(x).shape)
-                self.W = self.W - self.eta * np.sum(np.dot(np.transpose(x), self.predict(x) - y))
+        for i in range(self.runs):
+            y_hat = self.predict(x)
+            y_delta = y_hat - y
+            grad = x.T.dot(y_delta)
+            self.W = self.W - self.eta*(grad/x.shape[0])
 
     # TODO: Fix this method!
     def predict(self, x):
-        return sig(np.dot(x, self.W))
+        s = sigmoid(np.dot(x, self.W))
+        return s
 
 # Function to visualize prediction lines
 # Takes as input last_x, last_y, [list of models], basis function, title
@@ -116,6 +119,7 @@ if __name__ == "__main__":
     eta = 0.001
     runs = 10000
     N = 30
+    # N = 1000 # testing for larger values of N
 
     # TODO: Make plot for each basis with all 10 models on each plot
 
