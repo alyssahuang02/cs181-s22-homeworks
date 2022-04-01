@@ -60,7 +60,7 @@ Please submit your \textbf{\LaTeX\ file and code files to the Gradescope assignm
 
 In this problem we will explore expectation-maximization for a Categorical-Gamma Mixture model.
 
-Let us suppose the following generative story for an observation $x$: first one of $K$ classes is randomly selected, and then the features $x$ are sampled according to this class. If $$z \sim \operatorname{Categorical}(\btheta)$$ indicates the selected class, then $x$ is sampled according to the class or ``component'' distribution corresponding to $z$. (Here, $\btheta$ is the mixing proportion over the $K$ components: $\sum_k \theta_k = 1$ and $ \theta_k > 0$). In this problem, we assume these component distributions are gamma distributions with shared shape parameter but different scale parameters: $$x | z \sim \operatorname{Gamma}(\alpha, \beta_k).$$
+Let us suppose the following generative story for an observation $x$: first one of $K$ classes is randomly selected, and then the features $x$ are sampled according to this class. If $$z \sim \operatorname{Categorical}(\btheta)$$ indicates the selected class, then $x$ is sampled according to the class or ``component'' distribution corresponding to $z$. (Here, $\btheta$ is the mixing proportion over the $K$ components: $\sum_k \theta_k = 1$ and $ \theta_k > 0$). In this problem, we assume these component distributions are gamma distributions with shared shape parameter but different rate parameters: $$x | z \sim \operatorname{Gamma}(\alpha, \beta_k).$$
 
 In an unsupervised setting, we are only given a set of observables as our training dataset: $\mathcal D = \{x_n\}_{n=1}^N$. The EM algorithm allows us to learn the underlying generative process (the parameters $\btheta$ and $\{\beta_k\}$) despite not having the latent variables $\{z_n\}$ corresponding to our training data.
 
@@ -230,13 +230,6 @@ For this problem you will implement PCA from scratch on the first 6000 images of
   For consistency in grading, define the reconstruction error as the squared L2
   norm averaged over all data points.
 
-% FDV: Added this part: Solution should be that it does not change the
-% reconstruction error (if before X approx W*U, it becomes W*R^-1*R*U)
-% and that while still orthogonal, it may no longer align with the
-% ordered directions of most variance.  Note: we can ask why or why
-% not, or say "Why doesn't this change the reconstruction error?  What
-% parts of the interpretation of the principle components change, and
-% what stays the same?"
 \item Suppose you took the original matrix of principle components
   that you found $U$ and multiplied it by some rotation matrix $R$.
   Would that change the quality of the reconstruction error in the
